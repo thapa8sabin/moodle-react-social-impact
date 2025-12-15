@@ -1,0 +1,22 @@
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: moodle
+    volumes:
+      - db_data:/var/lib/mysql
+  moodle:
+    image: moodlehq/moodle-php-apache:8.3
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      MOODLE_DBTYPE: mysqli
+      MOODLE_DBHOST: db
+      MOODLE_DBNAME: moodle
+      MOODLE_DBUSER: root
+      MOODLE_DBPASS: secret
+volumes:
+  db_data:
