@@ -30,15 +30,15 @@ local/socialimpact/
 
 ### Tables
 
-We will use the prefix `si_` for the plugin tables (in Moodle this effectively becomes `mdl_si_...` depending on the global prefix).
+We will use the prefix `md_` for the plugin tables (in Moodle this effectively becomes `mdl_md_...` depending on the global prefix).
 
-#### `si_user_progress`
+#### `md_user_progress`
 Tracks the user's progress through social impact projects.
 
 **SQL CREATE TABLE Statement:**
 
 ```sql
-CREATE TABLE si_user_progress (
+CREATE TABLE md_user_progress (
     id BIGINT(10) NOT NULL AUTO_INCREMENT,
     userid BIGINT(10) NOT NULL,
     projectid BIGINT(10) NOT NULL,
@@ -49,17 +49,17 @@ CREATE TABLE si_user_progress (
     timemodified BIGINT(10) NOT NULL,
     CONSTRAINT PRIMARY KEY (id)
 );
-CREATE INDEX si_user_prog_use_ix ON si_user_progress (userid);
-CREATE INDEX si_user_prog_pro_ix ON si_user_progress (projectid);
+CREATE INDEX md_user_prog_use_ix ON md_user_progress (userid);
+CREATE INDEX md_user_prog_pro_ix ON md_user_progress (projectid);
 ```
 
-#### `si_projects`
+#### `md_projects`
 Stores metadata about the social impact projects available to users.
 
 **SQL CREATE TABLE Statement:**
 
 ```sql
-CREATE TABLE si_projects (
+CREATE TABLE md_projects (
     id BIGINT(10) NOT NULL AUTO_INCREMENT,
     courseid BIGINT(10) NOT NULL, -- Link to a Moodle course
     title VARCHAR(255) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE si_projects (
     timemodified BIGINT(10) NOT NULL,
     CONSTRAINT PRIMARY KEY (id)
 );
-CREATE INDEX si_proj_cou_ix ON si_projects (courseid);
+CREATE INDEX md_proj_cou_ix ON md_projects (courseid);
 ```
 
 ## 3. REST API Endpoints
@@ -164,9 +164,9 @@ components:
 
 ```mermaid
 erDiagram
-    mdl_user ||--o{ si_user_progress : "tracks"
-    mdl_course ||--o{ si_projects : "contains"
-    si_projects ||--o{ si_user_progress : "evaluated_in"
+    mdl_user ||--o{ md_user_progress : "tracks"
+    mdl_course ||--o{ md_projects : "contains"
+    md_projects ||--o{ md_user_progress : "evaluated_in"
 
     mdl_user {
         bigint id PK
@@ -174,17 +174,17 @@ erDiagram
         string email
     }
 
-    si_projects {
+    md_projects {
         bigint id PK
         bigint courseid FK "Ref mdl_course.id"
         string title
         int points
     }
 
-    si_user_progress {
+    md_user_progress {
         bigint id PK
         bigint userid FK "Ref mdl_user.id"
-        bigint projectid FK "Ref si_projects.id"
+        bigint projectid FK "Ref md_projects.id"
         string status
         int score
         int completiondate

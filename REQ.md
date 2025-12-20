@@ -13,9 +13,9 @@
     *   Dashboard for instructors to grade and review evidence.
 2.  **RESTful API (Moodle External Services)**:
     *   **Auth**: Secure token generation and validation.
-    *   **GET /view_course**: Retrieve list of assigned social projects.
-    *   **GET /view_course/{id}**: Retrieve details, milestones, and feedback.
-    *   **POST /view_course/{id}/update**: Submit progress (text, images) and update milestone status.
+    *   **GET /socialimpact/user/{id}/progress**: Retrieve list of assigned social projects.
+    *   **GET /socialimpact/projects**: Retrieve details, milestones, and feedback.
+    *   **POST /socialimpact/progress**: Submit progress (text, images) and update milestone status.
 3.  **Security & Performance**:
     *   Capability checks (RBAC) ensuring only enrolled users access data.
     *   Efficient database queries for API responses.
@@ -33,7 +33,7 @@
 | :--- | :---: | :---: | :---: | :---: |
 | **User Authentication** | ✅ (Token Service) | ✅ (Login UI) | ✅ (Token Endpoint) | **High** |
 | **Project Configuration** | ✅ (Activity Settings) | | | **High** |
-| **View Course list** | | ✅ (List View) | ✅ (Get Projects) | **High** |
+| **View User progress** | | ✅ (List View) | ✅ (Get Projects) | **High** |
 
 ## 4. High-Level Timeline (3 Months)
 
