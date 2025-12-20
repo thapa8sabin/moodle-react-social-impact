@@ -26,4 +26,3 @@ services:
 volumes:
   db_data:
   moodledata:
-# http://localhost:8080/admin/upgradesettings.php?return=site
