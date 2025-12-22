@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -25,30 +26,28 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back!</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email Address"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>LOGIN</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => Alert.alert("Forgot Password", "Reset link sent")}
-      >
-        <Text style={styles.link}>Forgot Password?</Text>
-      </TouchableOpacity>
+      <Image source={require("../../assets/Logo.png")} style={styles.logo} />
+      <Text style={styles.title}>Student Login</Text>
+      <View style={{ backgroundColor: "#F5F5F5" }}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email Address"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>LOGIN</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -60,10 +59,18 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
+  logo: {
+    fontSize: 64,
+    marginBottom: 10,
+    alignSelf: "center",
+  },
   title: {
     fontSize: 24,
     textAlign: "center",
     marginBottom: 40,
+  },
+  formView: {
+    backgroundColor: "#F3F0F0",
   },
   input: {
     borderWidth: 1,
@@ -73,19 +80,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#2C2C2C",
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
     marginBottom: 20,
   },
   buttonText: {
-    color: "#fff",
+    color: "#F5F5F5",
     fontSize: 18,
-  },
-  link: {
-    textAlign: "center",
-    color: "#007AFF",
   },
 });
 

@@ -6,18 +6,20 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  Button,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 interface Course {
   id: string;
   title: string;
-  progress: number;
+  total: number;
+  completed: number;
 }
 
 const mockCourses: Course[] = [
-  { id: "1", title: "Social Impact", progress: 50 },
-  { id: "2", title: "Ethics Training", progress: 80 },
+  { id: "1", title: "Social Impact", total: 100, completed: 50 },
+  { id: "2", title: "Ethics Training", total: 100, completed: 80 },
 ];
 
 const CourseList = () => {
@@ -30,40 +32,27 @@ const CourseList = () => {
   );
 
   const renderItem = ({ item }: { item: Course }) => (
-    <TouchableOpacity
-      style={styles.courseCard}
-      onPress={() =>
-        navigation.navigate("ProgressDetail" as never, { course: item })
-      }
-    >
+    <View style={styles.courseCard}>
       <Text style={styles.courseTitle}>{item.title}</Text>
-      <Text>Progress: {item.progress}%</Text>
-      <View style={[styles.progressBar, { width: `${item.progress}%` }]} />
-    </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() =>
+          navigation.navigate("ProgressDetail" as never, { course: item })
+        }
+      >
+        <Text style={styles.buttonText}>View Progress</Text>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search Courses..."
-          value={search}
-          onChangeText={setSearch}
-        />
-        <TouchableOpacity style={styles.menuButton}>
-          <Text>Menu</Text>
-        </TouchableOpacity>
-      </View>
       <FlatList
         data={filteredCourses}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         style={styles.list}
       />
-      <TouchableOpacity style={styles.fab}>
-        <Text>Enroll New</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -93,27 +82,34 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   courseCard: {
-    padding: 15,
+    padding: 5,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
+    borderRadius: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F2F2F2",
   },
   courseTitle: {
+    color: "#000000",
     fontSize: 18,
     fontWeight: "bold",
+    flex: 0.4,
   },
-  progressBar: {
-    height: 10,
-    backgroundColor: "#007AFF",
+  button: {
+    backgroundColor: "#2C2C2C",
+    padding: 2,
     borderRadius: 5,
-    marginTop: 5,
+    flex: 0.6,
+    alignItems: "center",
+    justifyContent: "center",
+    maxWidth: 130,
+    minHeight: 40,
+    marginTop: 2,
   },
-  fab: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    backgroundColor: "#007AFF",
-    padding: 15,
-    borderRadius: 30,
+  buttonText: {
+    color: "#F5F5F5",
+    fontSize: 12,
   },
 });
 
