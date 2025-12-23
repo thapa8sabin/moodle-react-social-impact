@@ -21,26 +21,21 @@ jobs:
 
   lint-js:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./socialimpact-app  # Sets default dir for all 'run' steps in this job
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'  # Caches node_modules based on package-lock
+          cache: 'npm'
+          cache-dependency-path: socialimpact-app/package-lock.json  # Caches based on subdir lock file
       - name: Install JS deps
-        run: |
-          cd socialimpact-app
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            echo "Warning: No lock file found, using npm install (less reproducible)"
-            npm install
-          fi
+        run: npm ci  # Now runs in ./socialimpact-app/
       - name: Lint JS/TS
-        run: |
-          cd socialimpact-app
-          npx eslint . --ext .js,.ts,.tsx || exit 1
+        run: npx eslint . --ext .js,.ts,.tsx || exit 1
 
   phpunit:
     runs-on: ubuntu-latest
