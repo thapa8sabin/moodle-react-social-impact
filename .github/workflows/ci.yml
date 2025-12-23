@@ -58,7 +58,7 @@ jobs:
       - name: Install Moodle deps
         run: composer install --no-progress --no-interaction --prefer-dist
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --bootstrap tests/bootstrap.php public/local/socialimpact/tests/ || exit 1
+        run: vendor/bin/phpunit --bootstrap public/local/socialimpact/tests/ || exit 1
 
   docker-build:
     runs-on: ubuntu-latest
