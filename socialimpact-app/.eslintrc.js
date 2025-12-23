@@ -1,1 +1,0 @@
-module.exports = { extends: ['expo/tslint'], rules: { /* your rules */ } };
