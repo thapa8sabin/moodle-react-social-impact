@@ -27,11 +27,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'npm'  # Caches node_modules based on package-lock
       - name: Install JS deps
-        run: cd socialimpact-app && npm ci
+        run: |
+          cd socialimpact-app
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            echo "Warning: No lock file found, using npm install (less reproducible)"
+            npm install
+          fi
       - name: Lint JS/TS
-        run: cd socialimpact-app && npx eslint . --ext .js,.ts,.tsx || exit 1
+        run: |
+          cd socialimpact-app
+          npx eslint . --ext .js,.ts,.tsx || exit 1
 
   phpunit:
     runs-on: ubuntu-latest
