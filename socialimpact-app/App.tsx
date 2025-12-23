@@ -8,9 +8,9 @@ import { AuthProvider, useAuth } from "./src/context/AuthContext";
 
 const Stack = createNativeStackNavigator();
 
-const protectedRoute = ({ children }: { children: React.ReactNode }) => {
+// Protected Route Component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { token } = useAuth();
-
   return token ? <>{children}</> : <Login />;
 };
 
@@ -40,7 +40,9 @@ export default function App() {
   return (
     <AuthProvider>
       <NavigationContainer>
-        <RootNavigator />
+        <ProtectedRoute>
+          <RootNavigator />
+        </ProtectedRoute>
       </NavigationContainer>
     </AuthProvider>
   );

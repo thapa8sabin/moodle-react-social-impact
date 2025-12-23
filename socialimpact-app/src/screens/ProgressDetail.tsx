@@ -64,7 +64,6 @@ const ProgressDetail = () => {
                   : 0
               }%`,
             },
-            ,
           ]}
         />
       </View>

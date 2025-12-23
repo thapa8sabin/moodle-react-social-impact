@@ -17,7 +17,6 @@ interface Course {
 
 const CourseList = () => {
   const [courses, setCourses] = useState<Course[]>([]);
-  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const { token } = useAuth();
@@ -45,10 +44,6 @@ const CourseList = () => {
     }
   };
 
-  const filteredCourses = courses.filter((course) =>
-    course.fullname.toLowerCase().includes(search.toLowerCase())
-  );
-
   const renderItem = ({ item }: { item: Course }) => (
     <View style={styles.courseCard}>
       <Text style={styles.courseTitle}>{item.fullname}</Text>
@@ -74,7 +69,7 @@ const CourseList = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={filteredCourses}
+        data={courses}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         style={styles.list}
