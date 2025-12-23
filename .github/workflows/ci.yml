@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-php:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Lint PHP
+        run: |
+          find ./moodle -name "*.php" -exec php -l {} \; || exit 1
+
+  lint-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install JS deps
+        run: cd socialimpact-app && npm ci
+      - name: Lint JS/TS
+        run: cd socialimpact-app && npx eslint . --ext .js,.ts,.tsx || exit 1
+
+  phpunit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          extensions: mysqli, intl, soap, zip
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+      - name: Install Moodle deps
+        run: |
+          cd moodle
+          composer install --no-progress --no-interaction --prefer-dist
+      - name: Run PHPUnit
+        run: |
+          cd moodle
+          vendor/bin/phpunit --bootstrap tests/bootstrap.php public/local/socialimpact/tests/ || exit 1
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: [lint-php, lint-js, phpunit]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Moodle plugin Docker image
+        run: |
+          cd moodle
+          docker build -t moodle-socialimpact:latest .
+
+  docker-push:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [docker-build]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./moodle
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/moodle-socialimpact:latest
