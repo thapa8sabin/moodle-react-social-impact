@@ -17,7 +17,7 @@ jobs:
           php-version: '8.3'
       - name: Lint PHP
         run: |
-          find ./moodle -name "*.php" -exec php -l {} \; || exit 1
+          find ./moodle-app -name "*.php" -exec php -l {} \; || exit 1
 
   lint-js:
     runs-on: ubuntu-latest
@@ -58,13 +58,13 @@ jobs:
       - name: Install Moodle deps
         run: composer install --no-progress --no-interaction --prefer-dist
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --bootstrap public/local/socialimpact/tests/ || exit 1
+        run: vendor/bin/phpunit public/local/socialimpact/tests/ || exit 1
 
   docker-build:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./moodle
+        working-directory: ./moodle-app
     needs: [lint-php, lint-js, phpunit]
     steps:
       - uses: actions/checkout@v4
