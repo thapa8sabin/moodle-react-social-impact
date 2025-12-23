@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
-import { getCourses } from "../services/api";
+import { useCourses } from "../services/api";
 
 interface Course {
   id: string;
@@ -16,33 +16,9 @@ interface Course {
 }
 
 const CourseList = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const { token } = useAuth();
-
-  useEffect(() => {
-    if (token) {
-      fetchCourses();
-    }
-  }, [token]);
-
-  const fetchCourses = async () => {
-    setLoading(true);
-    try {
-      const fetchedCourses = await getCourses(token!);
-      // Map Moodle response (adjust based on actual API shape)
-      const mappedCourses = fetchedCourses.map((course: any) => ({
-        id: course.id.toString(),
-        fullname: course.fullname,
-      }));
-      setCourses(mappedCourses);
-    } catch (error) {
-      // Handled in api.ts
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: courses = [], isLoading: coursesLoading } = useCourses(token!);
 
   const renderItem = ({ item }: { item: Course }) => (
     <View style={styles.courseCard}>
@@ -58,7 +34,7 @@ const CourseList = () => {
     </View>
   );
 
-  if (loading) {
+  if (coursesLoading) {
     return (
       <View style={styles.container}>
         <Text>Loading courses...</Text>
@@ -116,6 +92,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     flex: 0.4,
+    alignSelf: "center",
   },
   button: {
     backgroundColor: "#2C2C2C",

@@ -1,5 +1,6 @@
 import { Alert } from 'react-native';
 import { MOODLE_BASE_URL } from '@env';
+import { useQuery } from '@tanstack/react-query';
 
 const BASE_URL = MOODLE_BASE_URL;
 
@@ -36,6 +37,20 @@ const handleError = (error: any, defaultMessage: string = 'Something went wrong'
     ...(title === 'Authentication Failed' ? [{ text: 'Log In', onPress: () => {/* Navigate to login via context */} }] : []),
   ]);
 };
+
+export const useCourses = (token: string) => {
+  return useQuery({
+    queryKey: ['courses', token],
+    queryFn: () => getCourses(token),
+  });
+}
+
+export const useUserProgress = (token: string, userid: number, courseid: number) => {
+  return useQuery({
+    queryKey: ['userProgress', token, userid, courseid],
+    queryFn: () => getUserProgress(token, userid, courseid),
+  });
+}
 
 // Login: POST to Moodle's token endpoint
 export const login = async (username: string, password: string): Promise<string> => {

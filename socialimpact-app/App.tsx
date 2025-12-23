@@ -5,6 +5,7 @@ import Login from "./src/screens/Login";
 import CourseList from "./src/screens/CourseList";
 import ProgressDetail from "./src/screens/ProgressDetail";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
+import { QueryProvider } from "./src/context/QueryProvider";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,7 +21,7 @@ function RootNavigator() {
       <Stack.Screen
         name="Login"
         component={Login}
-        options={{ headerShown: false }}
+        options={{ title: "Login" }}
       />
       <Stack.Screen
         name="CourseList"
@@ -38,12 +39,14 @@ function RootNavigator() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <NavigationContainer>
-        <ProtectedRoute>
-          <RootNavigator />
-        </ProtectedRoute>
-      </NavigationContainer>
-    </AuthProvider>
+    <QueryProvider>
+      <AuthProvider>
+        <NavigationContainer>
+          <ProtectedRoute>
+            <RootNavigator />
+          </ProtectedRoute>
+        </NavigationContainer>
+      </AuthProvider>
+    </QueryProvider>
   );
 }

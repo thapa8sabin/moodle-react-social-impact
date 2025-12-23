@@ -18,7 +18,23 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation();
-  const { setToken, setUser } = useAuth();
+  const { token, setToken, user, setUser } = useAuth();
+
+  if (token) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>
+          You are already logged in as {user?.fullname}
+        </Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("CourseList" as never)}
+        >
+          <Text style={styles.buttonText}>Go to Courses</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -53,7 +69,9 @@ const Login = () => {
           value={username}
           onChangeText={setUsername}
           autoCapitalize="none"
-          editable={!loading}
+          accessible={true}
+          accessibilityLabel="Enter your username provided by your institution"
+          accessibilityHint="Username for login"
         />
         <TextInput
           style={styles.input}
