@@ -1,29 +1,31 @@
 services:
   db:
     image: mysql:8.4
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: moodle
-    volumes:
-      - db_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
+
   moodle:
     image: moodlehq/moodle-php-apache:8.3
-    hostname: host.docker.internal
     depends_on:
       - db
     ports:
       - "8080:80"
+    volumes:
+      - ./moodle-app:/var/www/html
+      - moodledata:/var/www/moodledata
     environment:
       MOODLE_DBTYPE: mysqli
       MOODLE_DBHOST: db
       MOODLE_DBNAME: moodle
       MOODLE_DBUSER: root
       MOODLE_DBPASS: secret
-    volumes:
-      - ./moodle:/var/www/html
-      - moodledata:/var/www/moodledata
+    hostname: host.docker.internal
+
   app:
     build:
       context: ./socialimpact-app
@@ -37,5 +39,5 @@ services:
     tty: true
 
 volumes:
-  db_data:
-  moodledata:
+  db_data: null
+  moodledata: null

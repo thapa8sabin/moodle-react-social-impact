@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./moodle 
+        working-directory: ./moodle-app
     steps:
       - uses: actions/checkout@v4
       - name: Set up PHP
