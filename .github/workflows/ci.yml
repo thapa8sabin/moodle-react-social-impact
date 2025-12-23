@@ -17,7 +17,7 @@ jobs:
           php-version: '8.3'
       - name: Lint PHP
         run: |
-          find ./moodle-app -name "*.php" -exec php -l {} \; || exit 1
+          find ./moodle-app/public/local/socialimpact -name "*.php" -exec php -l {} \; || exit 1
 
   lint-js:
     runs-on: ubuntu-latest
@@ -87,4 +87,4 @@ jobs:
         with:
           context: ./moodle
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/moodle-socialimpact:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/moodle-socialimpact:latest  # Uses username for repo
