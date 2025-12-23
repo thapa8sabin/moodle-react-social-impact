@@ -75,6 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [docker-build]
+    environment: Dockerhub
     steps:
       - uses: actions/checkout@v4
       - name: Log in to Docker Hub
@@ -85,6 +86,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./moodle
+          context: ./moodle-app
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/moodle-socialimpact:latest  # Uses username for repo
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/moodle-socialimpact:latest
