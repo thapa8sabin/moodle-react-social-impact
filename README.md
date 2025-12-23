@@ -28,7 +28,7 @@ The app supports mobile-first design, with mock data fallback and real API fetch
 - Moodle admin basics (web services/tokens)
 - Expo Go app (iOS/Android testing)
 
-# Quick Start
+## Quick Start
 
 ## 1. Clone Repo:
 
