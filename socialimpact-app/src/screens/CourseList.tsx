@@ -1,39 +1,57 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
-  Button,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
+import { getCourses } from "../services/api";
 
 interface Course {
   id: string;
-  title: string;
-  total: number;
-  completed: number;
+  fullname: string;
 }
 
-const mockCourses: Course[] = [
-  { id: "1", title: "Social Impact", total: 100, completed: 50 },
-  { id: "2", title: "Ethics Training", total: 100, completed: 80 },
-];
-
 const CourseList = () => {
-  const [courses, setCourses] = useState(mockCourses);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+  const { token } = useAuth();
+
+  useEffect(() => {
+    if (token) {
+      fetchCourses();
+    }
+  }, [token]);
+
+  const fetchCourses = async () => {
+    setLoading(true);
+    try {
+      const fetchedCourses = await getCourses(token!);
+      // Map Moodle response (adjust based on actual API shape)
+      const mappedCourses = fetchedCourses.map((course: any) => ({
+        id: course.id.toString(),
+        fullname: course.fullname,
+      }));
+      setCourses(mappedCourses);
+    } catch (error) {
+      // Handled in api.ts
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredCourses = courses.filter((course) =>
-    course.title.toLowerCase().includes(search.toLowerCase())
+    course.fullname.toLowerCase().includes(search.toLowerCase())
   );
 
   const renderItem = ({ item }: { item: Course }) => (
     <View style={styles.courseCard}>
-      <Text style={styles.courseTitle}>{item.title}</Text>
+      <Text style={styles.courseTitle}>{item.fullname}</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
@@ -44,6 +62,14 @@ const CourseList = () => {
       </TouchableOpacity>
     </View>
   );
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading courses...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

@@ -9,18 +9,36 @@ import {
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
+import { getUserDetails, login } from "../services/api";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation();
+  const { setToken, setUser } = useAuth();
 
-  const handleLogin = () => {
-    if (email && password) {
-      // Mock auth (replace with Moodle API call)
-      navigation.navigate("CourseList" as never);
-    } else {
+  const handleLogin = async () => {
+    if (!username || !password) {
       Alert.alert("Error", "Please enter email and password");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      login(username, password).then(async (token) => {
+        setToken(token);
+        const user = await getUserDetails(token);
+        setUser(user);
+        navigation.navigate("CourseList" as never);
+      });
+    } catch (error) {
+      // Error already alerted in api.ts
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,11 +49,11 @@ const Login = () => {
       <View style={{ backgroundColor: "#F5F5F5" }}>
         <TextInput
           style={styles.input}
-          placeholder="Email Address"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
           autoCapitalize="none"
+          editable={!loading}
         />
         <TextInput
           style={styles.input}
@@ -43,9 +61,17 @@ const Login = () => {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          editable={!loading}
         />
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>LOGIN</Text>
+        {error && <Text style={{ color: "red" }}>{error}</Text>}
+        <TouchableOpacity
+          style={[styles.button, loading && styles.disabled]}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Logging in..." : "LOGIN"}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -89,6 +115,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#F5F5F5",
     fontSize: 18,
+  },
+  disabled: {
+    backgroundColor: "#ccc",
   },
 });
 

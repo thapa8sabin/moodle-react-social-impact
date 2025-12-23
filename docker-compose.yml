@@ -10,6 +10,7 @@ services:
       - "3306:3306"
   moodle:
     image: moodlehq/moodle-php-apache:8.3
+    hostname: host.docker.internal
     depends_on:
       - db
     ports:
