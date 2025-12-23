@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./socialimpact-app  # Sets default dir for all 'run' steps in this job
+        working-directory: ./socialimpact-app
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node
@@ -39,6 +39,9 @@ jobs:
 
   phpunit:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./moodle 
     steps:
       - uses: actions/checkout@v4
       - name: Set up PHP
@@ -53,23 +56,20 @@ jobs:
           path: ~/.composer/cache
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
       - name: Install Moodle deps
-        run: |
-          cd moodle
-          composer install --no-progress --no-interaction --prefer-dist
+        run: composer install --no-progress --no-interaction --prefer-dist
       - name: Run PHPUnit
-        run: |
-          cd moodle
-          vendor/bin/phpunit --bootstrap tests/bootstrap.php public/local/socialimpact/tests/ || exit 1
+        run: vendor/bin/phpunit --bootstrap tests/bootstrap.php public/local/socialimpact/tests/ || exit 1
 
   docker-build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./moodle
     needs: [lint-php, lint-js, phpunit]
     steps:
       - uses: actions/checkout@v4
       - name: Build Moodle plugin Docker image
-        run: |
-          cd moodle
-          docker build -t moodle-socialimpact:latest .
+        run: docker build -t moodle-socialimpact:latest .
 
   docker-push:
     runs-on: ubuntu-latest
